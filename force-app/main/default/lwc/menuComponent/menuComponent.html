@@ -1,0 +1,33 @@
+<template>
+    <lightning-card title="Menu" icon-name="standard:product">
+        <div class="slds-m-around_medium">
+            <lightning-combobox
+                label="Category"
+                value={selectedCategory}
+                options={categoryOptions}
+                onchange={handleCategoryChange}>
+            </lightning-combobox>
+            
+            <div class="slds-grid slds-wrap">
+                <template for:each={menuItems} for:item="item">
+                    <div key={item.Id} class="slds-col menu-item-col force-single-card slds-p-around_small">
+                        <div class="slds-box menu-box">
+                            <h3 class="slds-text-heading_small">{item.Name}</h3>
+                            <p class="slds-m-top_x-small">Price: <lightning-formatted-number value={item.Price__c}></lightning-formatted-number></p>
+                            <p>Category: {item.Category__c}</p>
+                            <p>Type: {item.Veg_Non_Veg__c}</p>
+                            <p>Prep Time: {item.Preparation_Time__c} mins</p>
+                            <lightning-button 
+                                label="Add to Cart" 
+                                variant="brand" 
+                                class="slds-m-top_small"
+                                data-id={item.Id}
+                                onclick={handleAddToCart}>
+                            </lightning-button>
+                        </div>
+                    </div>
+                </template>
+            </div>
+        </div>
+    </lightning-card>
+</template>

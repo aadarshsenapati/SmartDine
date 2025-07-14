@@ -1,0 +1,85 @@
+<template>
+    <div class="smartdine-header slds-p-around_medium">
+        <img src={logoUrl} alt="SmartDine Logo" class="smartdine-logo" />
+    </div>
+    <div class="slds-grid slds-wrap slds-m-around_medium">
+        <!-- Menu Section -->
+        <div class="slds-col slds-size_2-of-3">
+            <template if:true={customerName}>
+            <h1 class="slds-text-heading_large">Hello, {customerName}!</h1>
+        </template>
+
+        <template if:false={customerName}>
+            <div class="slds-text-color_error slds-text-heading_small slds-p-vertical_medium">
+                ⚠ There is no customer on the table. Please ask a manager if anything looks wrong.
+            </div> 
+        </template>
+
+            <c-menu-component onaddtocart={handleAddToCart}></c-menu-component>
+        </div>
+
+        <!-- Cart Section -->
+        <div class="slds-col slds-size_1-of-3 slds-p-left_medium">
+            <div class="slds-box slds-theme_default">
+                <h2 class="slds-text-heading_medium">Your Order</h2>
+
+                <!-- Order Placed Message -->
+                <template if:true={placed}>
+                    <p class="slds-text-color_success slds-m-bottom_medium">
+                        Order placed successfully, please call an agent for bill.
+                    </p>
+                </template>
+
+                <!-- Cart Items -->
+                <template if:true={hasItems}>
+                    <template for:each={cartItems} for:item="item">
+                        <div key={item.id} class="slds-m-vertical_small">
+                            <strong>{item.name}</strong><br />
+                            {item.formattedPrice} x {item.quantity} = <strong>{item.formattedTotal}</strong>
+                            <template if:false={placed}>
+                                <div class="slds-m-top_xx-small">
+                                    <lightning-button-icon icon-name="utility:add" alternative-text="Add" 
+                                        data-id={item.id} onclick={increment}>
+                                    </lightning-button-icon>
+                                    <lightning-button-icon icon-name="utility:dash" alternative-text="Remove" 
+                                        data-id={item.id}
+                                        onclick={decrement}
+                                        disabled={item.isLocked}>
+                                    </lightning-button-icon>
+                                </div>
+                            </template>
+                        </div>
+                    </template>
+
+                    <div class="slds-m-top_medium">
+                        <hr />
+                        <p><strong>Total: {formattedTotal}</strong></p>
+
+                        <lightning-button
+                            label="Recalculate Total"
+                            variant="neutral"
+                            onclick={recalculateCart}
+                            class="slds-m-top_small">
+                        </lightning-button>
+                    </div>
+
+                    <br>
+                    <!-- Place Order Button -->
+                    <template if:false={placed}>
+                        <lightning-button
+                            label="Place Order"
+                            variant="brand"
+                            onclick={placeOrder}
+                            class="slds-m-top_medium">
+                        </lightning-button>
+                    </template>
+                </template>
+
+                <!-- No items -->
+                <template if:false={hasItems}>
+                    <p>No items in cart.</p>
+                </template>
+            </div>
+        </div>
+    </div>
+</template>

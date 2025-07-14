@@ -1,0 +1,62 @@
+/* Container styling */
+.slds-card {
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Header details */
+.slds-card p {
+    margin: 0.25rem 0;
+    font-size: 0.95rem;
+}
+
+/* Bill table */
+.slds-table {
+    border-collapse: collapse;
+    width: 100%;
+}
+
+.slds-table th {
+    background-color: #f3f6f9;
+    text-align: left;
+    padding: 0.5rem;
+    border-bottom: 1px solid #d8dde6;
+    font-weight: 600;
+}
+
+.slds-table td {
+    padding: 0.5rem;
+    border-bottom: 1px solid #e0e5ee;
+}
+
+/* Totals */
+.slds-text-align_right strong {
+    font-size: 1.1rem;
+    color: #16325c;
+}
+
+/* Thank you message */
+.slds-text-align_center p {
+    margin-top: 1.5rem;
+    font-size: 1rem;
+    color: #2e844a;
+    font-weight: 600;
+}
+
+@media print {
+    .no-print {
+        display: none !important;
+    }
+    .print-container {
+        padding: 1rem;
+        font-size: 14px;
+    }
+}
+
+.slds-modal__container {
+    animation: fadeIn 0.3s ease-in-out;
+}
+@keyframes fadeIn {
+    from { transform: translateY(-10%); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}

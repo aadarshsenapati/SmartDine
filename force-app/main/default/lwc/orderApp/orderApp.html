@@ -1,0 +1,175 @@
+<template>
+    <div class="slds-grid slds-wrap">
+        <!-- Menu Section -->
+        <div class="slds-col slds-size_2-of-3 slds-p-around_medium">
+            <div class="table-info-container">
+                <div class="slds-grid slds-grid_align-spread">
+                    <div class="slds-col">
+                        <h2 class="slds-text-heading_medium">
+                            Ordering for Table:
+                            <template if:true={tableNameLoading}>
+                                <lightning-spinner alternative-text="Loading table name" size="small" class="slds-m-left_small"></lightning-spinner>
+                            </template>
+                            <template if:false={tableNameLoading}>
+                                <span class="slds-badge slds-theme_inverse slds-p-around_x-small table-info-badge">
+                                    {tableName}
+                                </span>
+                                <template if:true={tableNameError}>
+                                    <lightning-icon icon-name="utility:warning" alternative-text="Error loading table name" title="Error loading table name" class="slds-m-left_x-small slds-icon-text-warning"></lightning-icon>
+                                </template>
+                            </template>
+                        </h2>
+                    </div>
+                    <div class="slds-col slds-text-align_right">
+                        <template if:true={hasExistingCart}>
+                            <lightning-badge label="Existing Session" class="slds-theme_success"></lightning-badge>
+                            <span class="slds-m-left_x-small">Resuming previous order</span>
+                        </template>
+                    </div>
+                </div>
+            </div>
+
+            <c-menu-component onaddtocart={handleAddToCart}></c-menu-component>
+        </div>
+
+        <!-- Cart Section -->
+        <div class="slds-col slds-size_1-of-3 slds-p-around_medium">
+            <lightning-card title="Your Cart" icon-name="utility:cart">
+                <div class="slds-p-around_medium">
+                    <template if:true={cartItems.length}>
+                        <div class="slds-box">
+                            <template for:each={cartItems} for:item="item">
+                                <div key={item.id} class="slds-grid slds-m-bottom_small slds-border_bottom">
+                                    <div class="slds-col slds-size_2-of-3">
+                                        <strong>{item.name}</strong>
+                                        <div>{item.formattedPrice} x {item.quantity}</div>
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-3 slds-text-align_right">
+                                        <div class="slds-float_right">{item.formattedTotal}</div>
+                                        <lightning-button-icon icon-name="utility:delete" variant="destructive" alternative-text="Remove item" data-id={item.id} onclick={handleRemoveItem} class="slds-m-left_small"></lightning-button-icon>
+                                    </div>
+                                </div>
+                            </template>
+
+                            <div class="slds-grid slds-m-top_medium">
+                                <div class="slds-col slds-size_2-of-3"><strong>Total:</strong></div>
+                                <div class="slds-col slds-size_1-of-3 slds-text-align_right">
+                                    <span class="cart-total-highlight">{formattedTotal}</span>
+                                </div>
+                            </div>
+
+                            <div class="slds-m-top_medium slds-grid slds-grid_align-center">
+                                <lightning-button label="Checkout" variant="brand" onclick={handleCheckout} class="slds-m-right_small"></lightning-button>
+                                <lightning-button label="Clear Cart" variant="destructive" onclick={handleNewOrder}></lightning-button>
+                            </div>
+                        </div>
+                    </template>
+
+                    <template if:false={cartItems.length}>
+                        <div class="slds-text-align_center slds-m-top_medium">
+                            <lightning-icon icon-name="utility:cart" size="large"></lightning-icon>
+                            <p class="slds-text-heading_small slds-m-top_small">Your cart is empty</p>
+                            <p>Add items from the menu to get started</p>
+                        </div>
+                    </template>
+
+                    <!-- Bill Section -->
+                    <template if:true={showBillSection}>
+                        <div class="slds-box slds-m-top_medium slds-theme_success">
+                            <h2 class="slds-text-heading_small slds-m-bottom_medium">
+                                <lightning-icon icon-name="action:approval" size="small"></lightning-icon>
+                                Order #{orderId} Created Successfully!
+                            </h2>
+                            <div class="slds-grid slds-grid_align-center">
+                                <lightning-button label="Generate Bill" variant="success" onclick={handleGenerateOptions} class="slds-m-right_small"></lightning-button>
+                                <lightning-button label="New Order" variant="neutral" onclick={handleNewOrder}></lightning-button>
+                            </div>
+                        </div>
+                    </template>
+                </div>
+            </lightning-card>
+        </div>
+    </div>
+
+    <!-- PAYMENT MODAL -->
+    <template if:true={showPaymentModal}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container payment-modal-container">
+                <header class="slds-modal__header">
+                    <h2 class="slds-text-heading_medium">Select Payment Method</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium">
+                    <lightning-radio-group
+                        name="payment"
+                        label="Choose a payment method"
+                        options={paymentOptions}
+                        value={selectedPayment}
+                        type="radio"
+                        onchange={handlePaymentChange}>
+                    </lightning-radio-group>
+
+                    <!-- Dynamic Payment Method Badge -->
+                    <template if:true={selectedPayment}>
+                        <div class="slds-m-top_medium">
+                            <template if:true={isUPI}>
+                                <span class="payment-badge badge-upi">Paying via UPI</span>
+                            </template>
+                            <template if:true={isCash}>
+                                <span class="payment-badge badge-cash">Paying with Cash</span>
+                            </template>
+                            <template if:true={isCard}>
+                                <span class="payment-badge badge-card">Paying with Card</span>
+                            </template>
+                        </div>
+                    </template>
+                </div>
+                <footer class="slds-modal__footer">
+                    <lightning-button variant="neutral" label="Cancel" onclick={closePaymentModal}></lightning-button>
+                    <lightning-button variant="brand" label="Confirm Payment" onclick={handleConfirmPayment}></lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+
+    <!-- BILL MODAL -->
+    <template if:true={showModal}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <h2 class="slds-text-heading_medium">Customer Bill</h2>
+                    <button class="slds-button slds-button_icon slds-modal__close" onclick={handleCloseModal}>
+                        <lightning-icon icon-name="utility:close" size="small"></lightning-icon>
+                    </button>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium">
+                    <p><strong>Customer:</strong> {customerName}</p>
+                    <p><strong>Table:</strong> {billTableName}</p>
+                    <p><strong>Payment Method:</strong> {paymentMethod}</p>
+                    <p><strong>Total:</strong> {formattedTotal}</p>
+                    <p><strong>Item Count:</strong> {itemCount}</p>
+
+                    <lightning-datatable
+                        key-field="name"
+                        data={parsedItems}
+                        columns={columns}
+                        hide-checkbox-column
+                        class="slds-m-top_medium">
+                    </lightning-datatable>
+
+                    <template if:true={showEmailInput}>
+                        <div class="slds-m-top_medium">
+                            <lightning-input label="Customer Email" value={emailToSend} onchange={handleEmailChange}></lightning-input>
+                            <lightning-button label="Send Email" variant="brand" class="slds-m-top_small" onclick={sendEmail} disabled={isEmailInvalid}></lightning-button>
+                        </div>
+                    </template>
+                </div>
+                <footer class="slds-modal__footer">
+                    <lightning-button label="Email Bill" variant="brand" onclick={handleShowEmailInput} class="slds-m-right_small"></lightning-button>
+                    <lightning-button label="Download PDF" onclick={handleDownloadPDF}></lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>

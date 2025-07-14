@@ -1,0 +1,247 @@
+<template>
+    <lightning-card class="customer-management-card" title="Customer Management" icon-name="standard:contact">
+        <div class="container slds-m-around_medium">
+            <!-- QR Scan Section -->
+            <div class="header-section">
+                <div class="slds-m-bottom_medium" if:true={showScanButton}>
+                    <lightning-button 
+                        label="Simulate QR Scan" 
+                        variant="brand"
+                        icon-name="utility:scan"
+                        class="scan-button"
+                        onclick={simulateQRScan}>
+                    </lightning-button>
+                </div>
+                
+                <!-- Selected Table Info -->
+                <template if:true={selectedTableName}>
+                    <div class="table-alert slds-notify slds-notify_alert slds-theme_info">
+                        <lightning-icon icon-name="utility:table" size="small"></lightning-icon>
+                        <h2 class="slds-text-heading_small">Selected Table: <strong>{selectedTableName}</strong></h2>
+                        <lightning-button 
+                            icon-name="utility:close" 
+                            variant="icon"
+                            class="clear-table-btn"
+                            title="Clear Table Selection"
+                            onclick={clearTableSelection}>
+                        </lightning-button>
+                    </div>
+                </template>
+            </div>
+            
+            <!-- Main Grid -->
+            <div class="main-grid slds-grid slds-wrap">
+                <!-- Tables Panel (Always Visible) -->
+                <div class="panel slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                    <div class="panel-card">
+                        <h2 class="panel-header slds-text-heading_medium">Tables</h2>
+                        <lightning-datatable
+                            key-field="id"
+                            data={tables}
+                            columns={tableColumns}
+                            onrowaction={handleTableAction}                    
+                            hide-checkbox-column
+                            class="custom-datatable">
+                        </lightning-datatable>
+                        
+                        <!-- Moved Create Order button here -->
+                        <lightning-button 
+                            label="Create Order" 
+                            class="slds-m-bottom_medium slds-m-top_medium"
+                            onclick={handleCreateOrder}>
+                        </lightning-button>
+                        
+                        <!-- Only managers should see Add Table button -->
+                        <template if:true={isManager}>
+                            <lightning-button 
+                                label="Add New Table" 
+                                variant="brand"
+                                icon-name="utility:add"
+                                class="new-table-btn"
+                                onclick={openTableForm}>
+                            </lightning-button>
+                        </template>
+                    </div>
+                </div>
+                
+                <!-- Customers Panel (Conditional) -->
+                <div class="panel slds-col slds-size_1-of-1 slds-medium-size_1-of-2">
+                    <div class="panel-card">
+                        <!-- Show customers only when table is selected -->
+                        <template if:true={selectedTableName}>
+                            <div class="customer-header slds-grid slds-grid_align-spread">
+                                <h2 class="panel-header slds-text-heading_medium">Customers at {selectedTableName}</h2>
+                                <lightning-button 
+                                    label="New Customer" 
+                                    variant="brand"
+                                    icon-name="utility:add"
+                                    class="new-customer-btn"
+                                    onclick={openCustomerForm}>
+                                </lightning-button>
+                            </div>
+                            <lightning-datatable
+                                key-field="id"
+                                data={customers}
+                                columns={customerColumns}
+                                onsave={handleCustomerSave}
+                                onrowaction={handleCustomerRowAction}
+                                draft-values={customerDraftValues}
+                                class="custom-datatable">
+                            </lightning-datatable>
+                        </template>
+                        
+                        <!-- Placeholder when no table selected -->
+                        <template if:false={selectedTableName}>
+                            <div class="empty-state slds-align_absolute-center">
+                                <lightning-icon 
+                                    icon-name="standard:empty" 
+                                    size="large"
+                                    alternative-text="No table selected"
+                                    class="slds-m-bottom_small">
+                                </lightning-icon>
+                                <h2 class="slds-text-heading_medium slds-m-top_medium">No Table Selected</h2>
+                                <p class="slds-text-body_regular slds-m-top_x-small">
+                                    Please select a table to view and manage customers
+                                </p>
+                            </div>
+                        </template>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Pending Payments Section -->
+            <div class="slds-m-top_large" if:true={pendingPayments.length}>
+                <h3 class="slds-text-heading_small">Pending Payments</h3>
+                <ul>
+                    <template for:each={pendingPayments} for:item="payment">
+                        <li key={payment.billId} class="slds-m-bottom_small">
+                            <div class="slds-box slds-box_small">
+                                <div class="slds-grid slds-wrap">
+                                    <div class="slds-col slds-size_1-of-2">
+                                        <strong>Table:</strong> {payment.tableName}
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-2">
+                                        <strong>Bill ID:</strong> {payment.billId}
+                                    </div>
+                                    <div class="slds-col slds-size_1-of-1 slds-m-top_small">
+                                        <lightning-button 
+                                            label="Confirm Payment" 
+                                            variant="brand"
+                                            onclick={handleShowPaymentConfirmation}
+                                            data-billid={payment.billId}>
+                                        </lightning-button>
+                                    </div>
+                                </div>
+                            </div>
+                        </li>
+                    </template>
+                </ul>
+            </div>
+        </div>
+    </lightning-card>
+
+    <!-- Customer Form Modal -->
+    <template if:true={showCustomerForm}>
+        <section role="dialog" tabindex="-1" aria-modal="true" class="slds-modal slds-fade-in-open customer-modal">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header modal-header slds-grid slds-grid_align-spread">
+                    <h2 class="slds-text-heading_medium">Create New Customer</h2>
+                    <button class="slds-button slds-button_icon slds-modal__close" 
+                            title="Close" onclick={closeCustomerForm}>
+                        <lightning-icon icon-name="utility:close" size="small"></lightning-icon>
+                    </button>
+                </header>
+                
+                <div class="slds-modal__content slds-p-around_medium">
+                    <template if:true={isLoading}>
+                        <div class="slds-align_absolute-center">
+                            <lightning-spinner alternative-text="Creating customer..." size="medium"></lightning-spinner>
+                        </div>
+                    </template>
+                    
+                    <lightning-record-edit-form
+                        object-api-name="Customer__c"
+                        onsuccess={handleCustomerSuccess}
+                        onsubmit={handleSubmit}
+                        onerror={handleFormError}
+                        class="customer-form">
+                        
+                        <div class="slds-grid slds-wrap">
+                            <div class="slds-col slds-size_1-of-1 slds-p-bottom_small">
+                                <lightning-input-field 
+                                    field-name="Name" 
+                                    class="form-field"
+                                    required>
+                                </lightning-input-field>
+                            </div>
+                            <div class="slds-col slds-size_1-of-1 slds-p-bottom_small">
+                                <lightning-input-field 
+                                    field-name="Phone__c"
+                                    class="form-field">
+                                </lightning-input-field>
+                            </div>
+                            <div class="slds-col slds-size_1-of-1 slds-p-bottom_small">
+                                <lightning-input-field 
+                                    field-name="Email__c"
+                                    class="form-field">
+                                </lightning-input-field>
+                            </div>
+                            <div class="slds-col slds-size_1-of-1 slds-p-bottom_small">
+                                <lightning-input-field 
+                                    field-name="Order_Info__c"
+                                    class="form-field">
+                                </lightning-input-field>
+                            </div>
+                            <div class="slds-col slds-size_1-of-1 slds-p-bottom_small">
+                                <lightning-input
+                                    label="Assigned Table"
+                                    value={selectedTableName}
+                                    class="form-field"
+                                    readonly>
+                                </lightning-input>
+                            </div>
+                        </div>
+                        
+                        <div class="form-footer slds-m-top_medium slds-grid slds-grid_align-end">
+                            <lightning-button
+                                variant="neutral"
+                                label="Cancel"
+                                onclick={closeCustomerForm}
+                                disabled={isLoading}
+                                class="slds-m-right_small">
+                            </lightning-button>
+                            <lightning-button
+                                variant="brand"
+                                type="submit"
+                                label="Save Customer"
+                                class="submit-btn"
+                                disabled={isSubmitDisabled}>
+                            </lightning-button>
+                        </div>
+                    </lightning-record-edit-form>
+                </div>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+    
+    <!-- Payment Confirmation Modal -->
+    <template if:true={showPaymentModal}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <h2 class="slds-text-heading_medium">Confirm Payment</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium">
+                    <p>Confirm payment for Table: <strong>{currentPayment.tableName}</strong></p>
+                    <p>Bill ID: <strong>{currentPayment.billId}</strong></p>
+                </div>
+                <footer class="slds-modal__footer">
+                    <lightning-button label="Cancel" onclick={cancelPayment}></lightning-button>
+                    <lightning-button variant="brand" label="Confirm Payment" onclick={confirmPayment}></lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>

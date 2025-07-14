@@ -1,0 +1,148 @@
+/* ---------- Table Info ---------- */
+.table-info-container {
+    background-color: #f3f3f3;
+    border-radius: 0.5rem;
+    padding: 1rem;
+    margin-bottom: 1rem;
+    border-left: 4px solid #4a86e8;
+}
+
+.table-info-badge {
+    font-size: 1.25rem;
+    padding: 0.5rem 1rem;
+    vertical-align: middle;
+}
+
+/* ---------- Cart Styles ---------- */
+.slds-border_bottom {
+    border-bottom: 1px solid #dddbda;
+    padding-bottom: 0.5rem;
+}
+
+.cart-total-highlight {
+    font-size: 1.3rem;
+    font-weight: 600;
+    color: #0b5cab;
+    background-color: #e6f3ff;
+    padding: 0.4rem 0.75rem;
+    border-radius: 0.5rem;
+    display: inline-block;
+    margin-top: 0.5rem;
+}
+
+/* ---------- Theme for Success Message ---------- */
+.slds-theme_success {
+    background-color: #f8fff9;
+    border: 1px solid #cdefd5;
+    padding: 1rem;
+    border-radius: 0.5rem;
+}
+
+/* ---------- Modal Styling ---------- */
+.slds-modal__container {
+    border-radius: 10px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.25);
+    animation: scaleFadeIn 0.3s ease-out;
+}
+
+@keyframes scaleFadeIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    100% {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+.slds-modal__header,
+.slds-modal__footer {
+    background-color: #f4f6f9;
+    padding: 1rem;
+}
+
+.slds-modal__content {
+    background-color: white;
+    padding: 1rem;
+}
+
+/* ---------- Payment Method Themes ---------- */
+.payment-upi {
+    border-left: 6px solid #2ecc71; /* Green */
+    background-color: #eafaf1;
+}
+
+.payment-cash {
+    border-left: 6px solid #f39c12; /* Orange */
+    background-color: #fef6e7;
+}
+
+.payment-card {
+    border-left: 6px solid #3498db; /* Blue */
+    background-color: #eaf2fb;
+}
+
+/* ---------- Modal Badge Styling ---------- */
+.payment-badge {
+    font-weight: 600;
+    font-size: 1rem;
+    display: inline-block;
+    padding: 0.3rem 0.8rem;
+    border-radius: 0.5rem;
+    margin-top: 0.5rem;
+}
+
+.badge-upi {
+    background-color: #2ecc71;
+    color: white;
+}
+
+.badge-cash {
+    background-color: #f39c12;
+    color: white;
+}
+
+.badge-card {
+    background-color: #3498db;
+    color: white;
+}
+
+/* ---------- Spacing Utilities ---------- */
+.slds-m-top_medium {
+    margin-top: 1rem;
+}
+
+.slds-m-bottom_medium {
+    margin-bottom: 1rem;
+}
+
+.slds-m-bottom_small {
+    margin-bottom: 0.5rem;
+}
+
+.slds-m-left_small {
+    margin-left: 0.5rem;
+}
+
+.slds-m-right_small {
+    margin-right: 0.5rem;
+}
+
+/* ---------- Responsive Layout ---------- */
+@media (max-width: 48em) {
+    .slds-size_2-of-3,
+    .slds-size_1-of-3 {
+        width: 100%;
+        max-width: 100%;
+    }
+
+    .slds-grid_align-spread {
+        flex-direction: column;
+    }
+
+    .slds-text-align_right {
+        text-align: left;
+        margin-top: 0.5rem;
+    }
+}

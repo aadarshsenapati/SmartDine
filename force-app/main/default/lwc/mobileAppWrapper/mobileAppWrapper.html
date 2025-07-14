@@ -1,0 +1,9 @@
+<template>
+    <template if:true={isCustomerView}>
+        <c-customer-agent onstartorder={handleStartOrder}></c-customer-agent>
+    </template>
+
+    <template if:true={isOrderView}>
+        <c-order-app table-id={selectedTableId} onback={handleBackToCustomer}></c-order-app>
+    </template>
+</template>

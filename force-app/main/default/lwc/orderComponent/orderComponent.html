@@ -1,0 +1,45 @@
+<template>
+    <lightning-card title="Order Cart" icon-name="standard:orders">
+        <div class="slds-m-around_medium">
+            <template if:true={isUpdating}>
+                <div class="slds-align_absolute-center">
+                    <lightning-spinner alternative-text="Updating"></lightning-spinner>
+                </div>
+            </template>
+            
+            <template if:false={isUpdating}>
+                <template if:true={cartItems}>
+                    <lightning-datatable
+                        key-field="Id"
+                        data={cartItems}
+                        columns={columns}
+                        draft-values={draftValues}
+                        onsave={handleQuantityChange}
+                        hide-checkbox-column>
+                    </lightning-datatable>
+                    
+                    <div class="slds-m-top_large slds-text-align_right">
+                        <p>Subtotal: <lightning-formatted-number value={subTotal} format-style="currency"></lightning-formatted-number></p>
+                        <p>GST (18%): <lightning-formatted-number value={gst} format-style="currency"></lightning-formatted-number></p>
+                        <p class="slds-text-heading_medium slds-m-top_small">
+                            Total: <lightning-formatted-number value={grandTotal} format-style="currency"></lightning-formatted-number>
+                        </p>
+                    </div>
+                    
+                    <div class="slds-m-top_medium">
+                        <lightning-button 
+                            label="Place Order" 
+                            variant="brand" 
+                            class="slds-float_right"
+                            onclick={handlePlaceOrder}>
+                        </lightning-button>
+                    </div>
+                </template>
+                
+                <template if:true={isCartEmpty}>
+                    <p>Your cart is empty. Add items from the menu.</p>
+                </template>
+            </template>
+        </div>
+    </lightning-card>
+</template>

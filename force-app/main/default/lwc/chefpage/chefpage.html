@@ -1,0 +1,64 @@
+<template>
+    <lightning-card title="Chef Dashboard" icon-name="utility:food_and_drink">
+        <div class="slds-m-around_medium">
+            <!-- Status Counter -->
+            <p class="slds-text-body_small slds-m-bottom_small">
+                <lightning-badge label={pendingLabel} class="slds-theme_warning slds-m-right_small"></lightning-badge>
+                <lightning-badge label={preparingLabel} class="slds-theme_info slds-m-right_small"></lightning-badge>
+                <lightning-badge label={preparedLabel} class="slds-theme_success"></lightning-badge>
+            </p>
+
+
+            <!-- Filters -->
+            <div class="slds-grid slds-gutters slds-m-bottom_medium">
+                <div class="slds-col">
+                    <lightning-combobox
+                        label="Filter by Table"
+                        options={tableOptions}
+                        value={selectedTable}
+                        onchange={handleTableChange}>
+                    </lightning-combobox>
+                </div>
+                <div class="slds-col">
+                    <lightning-combobox
+                        label="Filter by Status"
+                        options={statusOptions}
+                        value={selectedStatus}
+                        onchange={handleStatusChange}>
+                    </lightning-combobox>
+                </div>
+            </div>
+
+            <!-- No items -->
+            <template if:true={noItems}>
+                <p class="slds-text-body_regular">No matching items found.</p>
+            </template>
+
+            <!-- Order Items -->
+            <template for:each={filteredItems} for:item="item">
+                <div key={item.Id} class="slds-box slds-m-bottom_small">
+                    <div class="slds-grid slds-wrap">
+                        <div class="slds-col slds-size_1-of-2">
+                            <strong>{item.Menu_Item__r.Name}</strong>
+                            <p>Table: {item.Order__r.Table__r.Name}</p>
+                            <p>Quantity: {item.Quantity__c}</p>
+                        </div>
+                        <div class="slds-col slds-size_1-of-2 slds-text-align_right">
+                            <lightning-badge class={item.badgeClass} label={item.Status__c}></lightning-badge>
+                            <br />
+                            <lightning-button 
+                                label="Mark as Prepared" 
+                                variant="brand" 
+                                onclick={handleMarkPrepared} 
+                                data-id={item.Id}
+                                class="slds-m-top_small"
+                               disabled={item.disablePreparedButton}>
+                            </lightning-button>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+        </div>
+    </lightning-card>
+</template>

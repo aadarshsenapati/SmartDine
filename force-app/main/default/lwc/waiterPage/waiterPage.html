@@ -1,0 +1,49 @@
+<template>
+    <lightning-card title="Waiter Dashboard" icon-name="utility:check">
+        <div class="slds-m-around_medium">
+
+            <!-- Filter Dropdown -->
+            <lightning-combobox
+                label="Filter by Status"
+                options={statusOptions}
+                value={selectedStatus}
+                onchange={handleStatusChange}
+                class="slds-m-bottom_medium">
+            </lightning-combobox>
+
+            <!-- Filtered Items -->
+            <template for:each={filteredItems} for:item="item">
+                <div key={item.Id} class="slds-box slds-m-bottom_small">
+                    <strong>{item.Menu_Item__r.Name}</strong>
+                    <p>Table: {item.Order__r.Table__r.Name}</p>
+                    <p>Quantity: {item.Quantity__c}</p>
+
+                    <template if:true={item.isPrepared}>
+                        <lightning-button 
+                            label="Mark as Delivered" 
+                            variant="success" 
+                            onclick={handleComplete}
+                            data-id={item.Id}
+                            class="slds-m-top_small">
+                        </lightning-button>
+                    </template>
+
+                    <template if:true={item.isDelivered}>
+                        <lightning-button 
+                            label="Undo Delivered" 
+                            variant="destructive" 
+                            onclick={handleUndo}
+                            data-id={item.Id}
+                            class="slds-m-top_small">
+                        </lightning-button>
+                    </template>
+                </div>
+            </template>
+
+
+            <template if:true={isEmpty}>
+                <p>No items to display.</p>
+            </template>
+        </div>
+    </lightning-card>
+</template>

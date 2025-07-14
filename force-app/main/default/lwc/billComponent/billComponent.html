@@ -1,0 +1,91 @@
+<template>
+    <lightning-card title="SmartDine Bill Summary" icon-name="utility:receipt">
+        <div class="slds-p-around_medium print-container">
+            <template if:true={bill}>
+                <div class="slds-m-bottom_medium">
+                    <p><strong>Bill Number:</strong> {billNumber}</p>
+                    <p><strong>Table:</strong> {tableName}</p>
+                    <p><strong>Customer:</strong> {customerName}</p>
+                    <p><strong>Payment Method:</strong> {bill.Payment_Method__c}</p>
+                    <p><strong>Item Count:</strong> {bill.Item_Count__c}</p>
+                </div>
+
+                <lightning-datatable
+                    key-field="name"
+                    data={parsedItems}
+                    columns={columns}
+                    hide-checkbox-column>
+                </lightning-datatable>
+
+                <div class="slds-m-top_medium slds-text-align_right">
+                    <p><strong>Total Amount: </strong> {formattedTotal}</p>
+                </div>
+
+                <div class="slds-m-top_large slds-text-align_center no-print">
+                    <p>Thank you for dining with us!</p>
+                    <lightning-button 
+                        label="Generate Options" 
+                        onclick={handleGenerateOptions} 
+                        class="slds-m-top_medium slds-m-right_small">
+                    </lightning-button>
+                    <lightning-button 
+                        label="Back to Order" 
+                        onclick={handleBackToOrder} 
+                        variant="neutral">
+                    </lightning-button>
+                </div>
+            </template>
+
+            <template if:false={bill}>
+                <lightning-spinner alternative-text="Loading bill..."></lightning-spinner>
+            </template>
+        </div>
+    </lightning-card>
+
+    <!-- Modal for Email & Download -->
+    <template if:true={showModal}>
+        <section role="dialog" tabindex="-1" class="slds-modal slds-fade-in-open">
+            <div class="slds-modal__container">
+                <header class="slds-modal__header">
+                    <h2 class="slds-text-heading_medium">Choose Bill Action</h2>
+                </header>
+                <div class="slds-modal__content slds-p-around_medium">
+                    <lightning-button 
+                        label="Send Email Bill" 
+                        onclick={handleShowEmailInput} 
+                        class="slds-m-bottom_medium">
+                    </lightning-button>
+
+                    <template if:true={showEmailInput}>
+                        <lightning-input 
+                            label="Recipient Email" 
+                            value={emailToSend} 
+                            onchange={handleEmailChange}>
+                        </lightning-input>
+                        <lightning-button 
+                            variant="brand" 
+                            label="Send Email" 
+                            onclick={sendEmail} 
+                            class="slds-m-top_small"
+                            disabled={isEmailInvalid}>
+                        </lightning-button>
+                    </template>
+
+                    <lightning-button 
+                        label="Download PDF" 
+                        onclick={handleDownloadPDF} 
+                        class="slds-m-top_medium">
+                    </lightning-button>
+                </div>
+                <footer class="slds-modal__footer">
+                    <lightning-button 
+                        variant="neutral" 
+                        label="Close" 
+                        onclick={handleCloseModal}>
+                    </lightning-button>
+                </footer>
+            </div>
+        </section>
+        <div class="slds-backdrop slds-backdrop_open"></div>
+    </template>
+</template>

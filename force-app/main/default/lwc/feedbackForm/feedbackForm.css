@@ -1,0 +1,28 @@
+.star-rating {
+    display: flex;
+    justify-content: flex-start;
+    gap: 0.3rem;
+    font-size: 1.8rem;
+    margin: 0.3rem 0 0.8rem 0;
+}
+
+.star {
+    cursor: pointer;
+    color: #ffd54f;
+}
+
+/* Default: outlined star */
+.star::before {
+    content: "☆";
+}
+
+/* Filled star */
+.star.filled::before {
+    content: "★";
+}
+
+/* Hover effect (when user hovers) */
+.star:hover::before {
+    color: orange;
+    content: "★";
+}

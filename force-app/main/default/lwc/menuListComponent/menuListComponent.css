@@ -1,0 +1,28 @@
+/* Center the modal vertically and horizontally */
+.slds-modal__container {
+    max-width: 40rem !important;
+    margin: auto;
+}
+
+/* Add some padding and spacing */
+.slds-modal__content {
+    background-color: #fefefe;
+    border-radius: 0.5rem;
+}
+
+/* Style the Add button on the main page */
+lightning-button[variant="brand"] {
+    margin-bottom: 1rem;
+}
+
+/* Optional: smooth transitions */
+.slds-modal {
+    transition: all 0.25s ease-in-out;
+}
+
+/* Light border and spacing between fields */
+lightning-input,
+lightning-combobox {
+    margin-bottom: 1rem;
+}
+.disabled-row { color: rgb(251, 253, 144); opacity: 0.6; }

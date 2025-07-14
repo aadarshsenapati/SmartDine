@@ -1,0 +1,100 @@
+/* ---------- Responsive Grid for Menu Items ---------- */
+@media only screen and (max-width: 425px) {
+    .slds-col.slds-size_1-of-1.slds-small-size_1-of-2.slds-medium-size_1-of-3 {
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+
+    .slds-box {
+        height: 180px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 1rem;
+        box-shadow: 0 1px 4px rgba(0, 0, 0, 0.1);
+        border-radius: 0.75rem;
+        background-color: #fff;
+        box-sizing: border-box;
+    }
+
+    .slds-box h3 {
+        font-size: 1.1rem;
+        margin-bottom: 0.3rem;
+        font-weight: 600;
+        color: #2e2e2e;
+    }
+
+    .slds-box p {
+        font-size: 0.85rem;
+        margin: 0.15rem 0;
+        color: #555;
+    }
+
+    .slds-box lightning-button {
+        margin-top: auto;
+        width: 100%;
+        font-size: 1rem;
+        padding: 0.6rem 0;
+        border-radius: 0.5rem;
+    }
+}
+
+/* ---------- Tablet Layout (2 per row) ---------- */
+@media only screen and (min-width: 426px) and (max-width: 768px) {
+    .slds-col.slds-size_1-of-1.slds-small-size_1-of-2.slds-medium-size_1-of-3 {
+        width: 50% !important;
+        max-width: 50% !important;
+    }
+}
+
+/* ---------- Desktop Layout (3 per row) ---------- */
+@media only screen and (min-width: 769px) {
+    .slds-col.slds-size_1-of-1.slds-small-size_1-of-2.slds-medium-size_1-of-3 {
+        width: 33.3333% !important;
+        max-width: 33.3333% !important;
+    }
+}
+/* 🔒 Enforce 1 Card per Row at 360px and below */
+@media only screen and (max-width: 425px) {
+    /* Override SLDS grid behavior */
+    .slds-col.force-single-card,
+    .menu-item-col {
+        width: 100% !important;
+        max-width: 100% !important;
+        flex: 0 0 100% !important;
+        box-sizing: border-box;
+    }
+
+    .slds-box.menu-box {
+        height: 180px;
+        padding: 1rem;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        border-radius: 0.75rem;
+        background-color: #fff;
+        border: 1px solid #ddd;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.08);
+    }
+
+    .slds-box.menu-box h3 {
+        font-size: 1.1rem;
+        margin-bottom: 0.3rem;
+        font-weight: 600;
+        color: #222;
+    }
+
+    .slds-box.menu-box p {
+        font-size: 0.85rem;
+        margin: 0.15rem 0;
+        color: #555;
+    }
+
+    .slds-box.menu-box lightning-button {
+        margin-top: auto;
+        width: 100%;
+        font-size: 1rem;
+        padding: 0.6rem 0;
+        border-radius: 0.5rem;
+    }
+}
