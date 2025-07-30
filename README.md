@@ -1,5 +1,5 @@
 # SmartDine
-
+View here: https://drive.google.com/file/d/18IKpw90tzqoef1FZbgC7_d2QumACaqgl/view?usp=sharing
 ## 1. Overview
 
 **SmartDine** is a comprehensive restaurant management solution built on **Salesforce**, enabling:
